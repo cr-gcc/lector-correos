@@ -74,19 +74,14 @@ class EmailConnectionController extends Controller
                                 preg_match('/Diplomado en Línea(?: de)?\s+“([^”]+)”/i', $text, $diplomadoMatch);
                                 $diplomado = $diplomadoMatch[1] ?? null;
                                 //  Extraer fechas de inicio y fin
-                                preg_match('/del\s+(\d{1,2}\s+de\s+\w+\s+al\s+\d{1,2}\s+de\s+\w+\s+de\s+\d{4})/iu', $text, $fechaMatch);
-                                $fechas = $fechaMatch[1] ?? null;
-                                //  También puedes dividir fechas si lo necesitas
-                                $inicio = null;
-                                $fin = null;
-                                if ($fechas) {
-                                    preg_match('/(\d{1,2}\s+de\s+\w+)\s+al\s+(\d{1,2}\s+de\s+\w+)/iu', $fechas, $rango);
-                                    $inicio = $rango[1] ?? null;
-                                    $fin = $rango[2] ?? null;
-                                }
+                                preg_match('/a cabo del\s+(\d{1,2}\s+de\s+\w+)\s+al\s+(\d{1,2}\s+de\s+\w+)/iu', $text, $rango);
+                                $inicio = $rango[1] ?? null;
+                                $fin = $rango[2] ?? null;
                                 // Mostrar resultados
                                 Log::info("{$diplomado} {$modulo_entero} {$asesor} {$inicio} {$fin}");
                                 $success_flag+=1;
+                                //$message->setFlag('Seen');
+
                             }
                         }
                     }
