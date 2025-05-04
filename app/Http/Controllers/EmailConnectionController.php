@@ -11,20 +11,6 @@ use Illuminate\Http\Request;
 
 class EmailConnectionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(){
-        //var_dump("aefwqefwefewf");
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -109,38 +95,6 @@ class EmailConnectionController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
     public function connection_test(Request $request) {
         try {
             $client = Client::account();
@@ -162,6 +116,22 @@ class EmailConnectionController extends Controller
         $text = preg_replace('/\p{Mn}/u', '', $text); // elimina marcas de acento
         $text = strtolower($text);
         return trim($text);
+    }
+
+    public function delete_pdf(){
+        $folder = storage_path('app/public');
+        $deletedFiles = 0;
+
+        foreach (glob($folder . '/*.pdf') as $file) {
+            if (unlink($file)) {
+                $deletedFiles++;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Se eliminaron {$deletedFiles} archivo(s) PDF temporales."
+        ]);
     }
 
     function romano_entero($romano) {

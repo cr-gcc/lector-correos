@@ -20,6 +20,8 @@ Route::middleware('auth')->group(function () {
     //  Connection
         Route::post('/test-connection', [EmailConnectionController::class, 'connection_test'])->name('connection');
         Route::post('/email-pdf-letters', [EmailConnectionController::class, 'store'])->name('connection.store');
+        Route::post('/delete-pdf', [EmailConnectionController::class, 'delete_pdf'])->name('connection.delete');
+
 });
 
 require __DIR__.'/auth.php';
