@@ -62,15 +62,16 @@ class EmailConnectionController extends Controller
                                 $parser = new Parser();
                                 $pdf = $parser->parseFile($full_path);
                                 $text = $pdf->getText();
+                                
                                 //  Asesor(a)
                                 preg_match('/asesor \(a\):\s*(.+)/i', $text, $asesorMatch);
                                 $asesor = $asesorMatch[1] ?? null;
                                 //  Modulo
-                                preg_match('/módulo\s+([IVXLCDM]+)/i', $text, $match);
+                                preg_match('/módulo:?\s+([IVXLCDM]+)/iu', $text, $match);
                                 $modulo_romano = $match[1] ?? null;
                                 $modulo_entero = $modulo_romano ? $this->romano_entero($modulo_romano) : null;
                                 //  Diplomado
-                                preg_match('/Diplomado en Línea\s+“([^”]+)”/i', $text, $diplomadoMatch);
+                                preg_match('/Diplomado en Línea(?: de)?\s+“([^”]+)”/i', $text, $diplomadoMatch);
                                 $diplomado = $diplomadoMatch[1] ?? null;
                                 //  Extraer fechas de inicio y fin
                                 preg_match('/del\s+(\d{1,2}\s+de\s+\w+\s+al\s+\d{1,2}\s+de\s+\w+\s+de\s+\d{4})/iu', $text, $fechaMatch);
@@ -94,7 +95,7 @@ class EmailConnectionController extends Controller
             if ($success_flag) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Se agregaron {$success_flag} registro(s)'
+                    'message' => "Se agregaron {$success_flag} registro(s)"
                 ], 200);    
             }
             else {
