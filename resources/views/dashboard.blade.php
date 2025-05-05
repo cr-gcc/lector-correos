@@ -78,12 +78,12 @@
                     this['message_' + i] = '';
                     this['status_' + i] = false;
                 }
-                
+
                 this.loading = true;
                 tmp_url = this.url[opt];
                 tmp_status = 'status_'+opt;
                 tmp_msg =  'message_'+opt;
-
+                    
                 axios.get(tmp_url, {
                     headers: {'X-CSRF-TOKEN': this.token}
                 })
