@@ -40,15 +40,26 @@ class EmailConnectionController extends Controller
             $messages = $folder->query()
                 ->since(now()->subDays(7))
                 ->get();
+            //Log::info(json_encode($messages));
             foreach ($messages as $message) {
                 //  Normalizacion de texto para las comparaciones
-                $clean_tmp_subject = EmailOperations::normalizeText($message->getSubject());
+                $clean_tmp_subject = iconv_mime_decode($message->getSubject(), 0, "UTF-8");
+                $clean_tmp_subject = EmailOperations::normalizeText($clean_tmp_subject);
+                //Log::info($message->getSubject());
+                //Log::info($clean_tmp_subject);
+                //Log::info($subject);
                 if (str_contains($clean_tmp_subject, $subject)) {
                     foreach ($message->getAttachments() as $attachment) {
                         $filename = $attachment->getName();
                         //  Comparacion de nombres de los pdf
                         $clean_filename = EmailOperations::normalizeText($filename);
                         $extension = pathinfo($clean_filename, PATHINFO_EXTENSION);
+                        //  Depuracion de extenciones erroneas
+                        if (strpos($extension, ' ') !== false) {
+                            $extension = str_replace(' ', '', $extension);
+                            $filename = str_replace('pd f', $extension, $filename);
+                        }
+                        
                         if ($extension==$pdf_extension){
                             //  Guardado de archivo
                             if (str_contains($clean_filename, $pdf_name)) {
@@ -72,7 +83,6 @@ class EmailConnectionController extends Controller
                                 Log::info("{$diplomado} {$modulo_entero} {$asesor} {$inicio} {$fin}");
                                 $success_flag+=1;
                                 //$message->setFlag('Seen');
-
                             }
                         }
                     }
@@ -96,8 +106,6 @@ class EmailConnectionController extends Controller
             ], 400);
         }
     }
-
-    
 
     public function delete_pdf(){
         $folder = storage_path('app/public');

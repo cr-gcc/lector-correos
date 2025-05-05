@@ -23,30 +23,29 @@
                             <button type="button" @click="options(0)" class="w-full px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-100 rounded hover:bg-gray-400 dark:hover:bg-gray-500">
                                 Prueba de conexion
                             </button> 
-                            <div x-show="status_0" class="mt-2" x-text="message_0" :class="status_0 ? 'text-green-600' : 'text-red-600'"></div>   
+                            <div x-show="status_0" class="mt-2" x-text="message_0" :class="style_0=='success' ? 'text-green-600' : 'text-red-600'"></div>   
                         </div>
                         <!--  Informacion de correos  -->
                         <div class="mt-3 w-full">
                             <button type="button" @click="options(1)" class="w-full px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-100 rounded hover:bg-gray-400 dark:hover:bg-gray-500">
                                 Obtener informacion de correo
                             </button> 
-                            <div x-show="status_1" class="mt-2" x-text="message_1" :class="status_1 ? 'text-green-600' : 'text-red-600'"></div>
+                            <div x-show="status_1" class="mt-2" x-text="message_1" :class="style_1=='success' ? 'text-green-600' : 'text-red-600'"></div>
                         </div>
                         <!--  Informacion de correos y pdf -->
                         <div class="mt-3 w-full">
                             <button type="button" @click="options(2)" class="w-full px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-100 rounded hover:bg-gray-400 dark:hover:bg-gray-500">
                                 Obtener informacion de cartas
                             </button> 
-                            <div x-show="status_2" class="mt-2" x-text="message_2" :class="status_2 ? 'text-green-600' : 'text-red-600'"></div>
+                            <div x-show="status_2" class="mt-2" x-text="message_2" :class="style_2=='success' ? 'text-green-600' : 'text-red-600'"></div>
                         </div>
                         <!--  Borrado de archivos temporales  -->
                         <div class="mt-3 w-full">
                             <button type="button" @click="options(3)" class="w-full px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-100 rounded hover:bg-gray-400 dark:hover:bg-gray-500">
                                 Eliminar archivos
                             </button> 
-                            <div x-show="status_3" class="mt-2" x-text="message_3" :class="status_3 ? 'text-green-600' : 'text-red-600'"></div>
+                            <div x-show="status_3" class="mt-2" x-text="message_3" :class="style_3=='success' ? 'text-green-600' : 'text-red-600'"></div>
                         </div>
-                        
                     </div>
                 </div>
             </div>
@@ -71,11 +70,16 @@
             status_1: false,
             status_2: false,
             status_3: false,
+            style_0: '',
+            style_1: '',
+            style_2: '',
+            style_3: '',
             loading: false,
 
             options(opt){
                 for (let i = 0; i < this.url.length; i++) {
                     this['message_' + i] = '';
+                    this['style_' + i] = '';
                     this['status_' + i] = false;
                 }
 
@@ -83,16 +87,19 @@
                 tmp_url = this.url[opt];
                 tmp_status = 'status_'+opt;
                 tmp_msg =  'message_'+opt;
+                tmp_style = 'style_'+opt;
                     
                 axios.get(tmp_url, {
                     headers: {'X-CSRF-TOKEN': this.token}
                 })
                 .then(response => {
                     this[tmp_status] = true;
+                    this[tmp_style] = 'success';
                     this[tmp_msg] = response.data.message;
                 })
                 .catch(error => {
-                    this[tmp_status] = false;
+                    this[tmp_status] = true;
+                    this[tmp_style] = 'error';
                     this[tmp_msg] = 'Error de red';
                 })
                 .finally(() => {
