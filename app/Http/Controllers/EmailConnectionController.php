@@ -11,11 +11,21 @@ use Illuminate\Http\Request;
 
 class EmailConnectionController extends Controller
 {
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request){
+    public function connection_test() {
+        try {
+            $client = Client::account();
+            $client->connect();
+            return response()->json([
+                'message' => 'Conexión exitosa'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 400);
+        }
+    }
+    
+    public function email_pdf_letters(){
         $subject = $this->normaliza_texto('Carta invitación, Diplomado en línea');
         $pdf_name = $this->normaliza_texto('carta invitación');
         $pdf_extension = 'pdf';
@@ -95,28 +105,7 @@ class EmailConnectionController extends Controller
         }
     }
 
-    public function connection_test(Request $request) {
-        try {
-            $client = Client::account();
-            $client->connect();
-            return response()->json([
-                'success' => true, 
-                'message' => 'Conexión exitosa'
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false, 
-                'message' => $e->getMessage()
-            ], 400);
-        }
-    }
-
-    function normaliza_texto($text) {
-        $text = Normalizer::normalize($text, Normalizer::FORM_D); // necesita "intl"
-        $text = preg_replace('/\p{Mn}/u', '', $text); // elimina marcas de acento
-        $text = strtolower($text);
-        return trim($text);
-    }
+    
 
     public function delete_pdf(){
         $folder = storage_path('app/public');
@@ -133,6 +122,15 @@ class EmailConnectionController extends Controller
             'message' => "Se eliminaron {$deletedFiles} archivo(s) PDF temporales."
         ]);
     }
+
+    function normaliza_texto($text) {
+        $text = Normalizer::normalize($text, Normalizer::FORM_D); // necesita "intl"
+        $text = preg_replace('/\p{Mn}/u', '', $text); // elimina marcas de acento
+        $text = strtolower($text);
+        return trim($text);
+    }
+
+    
 
     function romano_entero($romano) {
         $mapa = [
