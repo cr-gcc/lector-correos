@@ -26,6 +26,7 @@ class EmailOperations
         else {
             $number = "NOT-MATCH";
         }
+        return $number;
     }    
 
     public static function getDiploma($text) {

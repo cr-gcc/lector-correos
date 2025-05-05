@@ -40,14 +40,12 @@ class EmailConnectionController extends Controller
             $messages = $folder->query()
                 ->since(now()->subDays(7))
                 ->get();
-            //Log::info(json_encode($messages));
+            
             foreach ($messages as $message) {
                 //  Normalizacion de texto para las comparaciones
                 $clean_tmp_subject = iconv_mime_decode($message->getSubject(), 0, "UTF-8");
                 $clean_tmp_subject = EmailOperations::normalizeText($clean_tmp_subject);
-                //Log::info($message->getSubject());
-                //Log::info($clean_tmp_subject);
-                //Log::info($subject);
+
                 if (str_contains($clean_tmp_subject, $subject)) {
                     foreach ($message->getAttachments() as $attachment) {
                         $filename = $attachment->getName();
